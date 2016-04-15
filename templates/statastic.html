@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>LRS Gateway Report</title>
+    <!-- <link rel='stylesheet prefetch' src='../static/css/bootstrap.min.css'> -->
+    <!-- <link rel='stylesheet prefetch' src='../static/css/font-awesome.min.css'> -->
+
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/sandstone/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>    
+    
+  </head>
+
+  <body>
+
+   <div class="container" ng-app="sortApp" ng-controller="statController">
+    
+    <div class="alert alert-info">
+      <p>LRS Gateway Status</p>
+    </div>
+    
+    <form>
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-addon"><i class="fa fa-search"></i></div>
+          <input type="text" class="form-control" placeholder="Search Process Info" ng-model="searchFish">
+        </div>      
+      </div>
+    </form>
+    
+    <table class="table table-bordered table-striped">
+      
+      <thead>
+        <tr>
+
+          <td>
+            <a href="#" ng-click="sortType = 'device_id'; sortReverse = !sortReverse">
+              Device Serial No
+              <span ng-show="sortType == 'device_id' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'device_id' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>
+
+          <td>
+            <a href="#" ng-click="sortType = 'boot_time'; sortReverse = !sortReverse">
+              Boot Time 
+              <span ng-show="sortType == 'boot_time' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'boot_time' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>          
+
+          <td>
+            <a href="#" ng-click="sortType = 'timestamp'; sortReverse = !sortReverse">
+              Timestamp
+              <span ng-show="sortType == 'timestamp' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'timestamp' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>         
+
+
+
+          <td>
+            <a href="#" ng-click="sortType = 'cpu_utilization'; sortReverse = !sortReverse">
+              Cpu Utilization
+              <span ng-show="sortType == 'cpu_utilization' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'cpu_utilization' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>
+
+          <td>
+            <a href="#" ng-click="sortType = 'mem_utilization'; sortReverse = !sortReverse">
+              Memory Utilization
+              <span ng-show="sortType == 'mem_utilization' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'mem_utilization' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>
+
+          <td>
+            <a href="#" ng-click="sortType = 'temperature'; sortReverse = !sortReverse">
+              Temperature
+              <span ng-show="sortType == 'temperature' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'temperature' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>
+
+
+          <td>
+            <a href="#" ng-click="sortType = 'firmware_status'; sortReverse = !sortReverse">
+              Firmware Status
+              <span ng-show="sortType == 'firmware_status' && !sortReverse" class="fa fa-caret-down"></span>
+              <span ng-show="sortType == 'firmware_status' && sortReverse" class="fa fa-caret-up"></span>
+            </a>
+          </td>
+
+        </tr>
+      </thead>
+
+      {% raw %}   
+      <tbody>
+        <tr ng-repeat="s in stat | orderBy:sortType:sortReverse | filter:searchFish">
+        
+                                      
+                    <td> <a href="/internet/log/{{s.device_id}}">{{s.device_id}} </a> </td>  
+                    <td>{{s.boot_time}}</td>
+                     <td>{{s.timestamp}}</td> 
+                    <td>{{s.cpu_utilization}}%</td>
+                    <td>{{s.mem_utilization}}%</td>
+                    <td>{{s.temperature}}°C</td>
+                    <td>{{s.firmware_status}}</td>
+        </tr>
+
+      <div data-pagination="" data-num-pages="numPages()" 
+        data-current-page="currentPage" data-max-size="maxSize"  
+        data-boundary-links="true"></div>
+                
+      </tbody>
+     {% endraw %} 
+      
+    </table>
+
+
+    
+  </div>
+</body>
+  <script src='../static/js/angular.min.js'></script>
+  <script src="../static/js/controller.js"></script>
+
+</html>

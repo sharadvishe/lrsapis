@@ -1,0 +1,33 @@
+
+    {
+        "network": {
+            "network_info": {
+                "sent_packets_droped": 0, 
+                "packets_received": 101285, 
+                "packets_sent": 61238, 
+                "byte_sent": 10837311, 
+                "no_of_sent_error": 0, 
+                "byte_received": 72450545, 
+                "no_of_received_error": 0, 
+                "received_pakets_droped": 0
+            }
+        }, 
+        "memory": {
+            "virtual_memory": {
+                "available": 6020063232, 
+                "used percentage": 27.4, 
+                "used": 4306182144, 
+                "free": 3983343616, 
+                "remaining percentage": 0, 
+                "total": 8289525760
+            }, 
+            "swap_memory": {
+                "remaining percentage": 0, 
+                "used percentage": 0.0, 
+                "total": 0, 
+                "free": 0, 
+                "used": 0
+            }
+        }
+    }
+

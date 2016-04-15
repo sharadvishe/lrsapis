@@ -1,0 +1,7 @@
+venv
+*.pyc
+credentials.json
+.env
+db.sqlite3
+config.py
+

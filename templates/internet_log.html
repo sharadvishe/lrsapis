@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>LRS Gateway Report</title>
+    <!-- <link rel='stylesheet prefetch' src='../static/css/bootstrap.min.css'> -->
+    <!-- <link rel='stylesheet prefetch' src='../static/css/font-awesome.min.css'> -->
+
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/sandstone/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>    
+    
+  </head>
+
+  <body>
+
+   <div class="container" ng-app="sortApp" >
+    
+    <div class="alert alert-info">
+      <p>Gateway Internet Status</p>
+    </div>
+    
+
+    
+    <table class="table table-bordered table-striped">
+      
+      <thead>
+        <tr>
+          <td>
+            <a href="#" >
+              Device Serial No
+            </a>
+          </td>
+
+          <td>
+            <a href="#" >
+              Internet Status
+            </a>
+          </td>           
+
+          <td>
+            <a href="#" >
+              From
+            </a>
+          </td>     
+          
+          <td>
+            <a href="#" >
+              To
+            </a>
+          </td>
+
+
+        </tr>
+      </thead>
+
+   
+      <tbody>
+
+
+
+        {% for l in data recursive %}
+
+        <tr>
+          <td>{{l.device_id}}</td>
+          <td>{{l.status}}</td>
+          <td>{{l.from_timestamp}}</td>
+          <td>{{l.to_timestamp}}</td>          
+        </tr>
+
+        {% endfor %}
+
+
+      </tbody>
+
+      
+    </table>
+    
+  </div>
+</body>
+  <script src='../static/js/angular.min.js'></script>
+  
+
+</html>
