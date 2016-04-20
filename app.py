@@ -78,6 +78,9 @@ def verify_password(username_or_token, password):
 
 @app.route('/api/users', methods=['POST'])
 def new_user():
+    """
+        Create New user for API authentication    
+    """
     username = request.json.get('username')
     password = request.json.get('password')
     if username is None or password is None:
@@ -103,6 +106,9 @@ def get_user(id):
 @app.route('/api/token')
 @auth.login_required
 def get_auth_token():
+    """
+    Get token for API authentication
+    """
     token = g.user.generate_auth_token(600)
     return jsonify({'token': token.decode('ascii'), 'duration': 600})
 
@@ -113,6 +119,9 @@ def get_resource():
     return jsonify({'data': 'Hello, %s!' % g.user.username})
 
 def convert(data):
+    """
+    Convert Unicode String to basestring
+    """
     if isinstance(data, basestring):
         return str(data)
     elif isinstance(data, collections.Mapping):
@@ -129,6 +138,9 @@ def index():
 
 @app.route('/processes')
 def show_processes():
+    """
+        Redirect to the Process details page which includes all running process on device
+    """
     log = json.loads((health_status()).data)
     log = json.loads(log['data'])
     logs = []
@@ -139,6 +151,9 @@ def show_processes():
 
 @app.route('/lrs/api/v1.0/gateway/status', methods=['GET'])
 def health_status():    
+    """
+        Shows Network,CPU and Memory Status of connectport x2e device
+    """
     status = GatewayStatus.objects.all().order_by('-timestamp')
     return jsonify(data=status.to_json())
     
@@ -146,6 +161,9 @@ def health_status():
 @app.route('/lrs/api/v1.0/gateway/status', methods=['POST'])
 @auth.login_required
 def set_health_status():
+    """
+        Persist Gateway Network,CPU and Memory Status data to MongoDB using MongoEngine ORM
+    """
     vm =  request.json['memory']['virtual_memory']
     sm =  request.json['memory']['swap_memory']
     ni =  request.json['network']['network_info']
@@ -164,12 +182,19 @@ def set_health_status():
 
 @app.route('/lrs/api/v1.0/statastic', methods=['GET'])
 def statastic():
+    """
+        return device health check status details in json format
+    """
     status = Statastic.objects.all().order_by('-timestamp')
     return status.to_json()
 
 @app.route('/lrs/api/v1.0/statastic', methods=['POST'])
 @auth.login_required
-def set_statastic():    
+def set_statastic():
+    """
+    Persist health check status data to MongoDB using MongoEngine ORM
+    """
+
     data = request.json
     temperature = 0
     device_id = "00:00:00:XX"
@@ -201,6 +226,9 @@ def get_process_status():
 @app.route('/lrs/api/v1.0/gateway_internal', methods=['POST'])
 @auth.login_required
 def set_process_status():
+    """
+    Persist process details data to MongoDB using MongoEngine ORM
+    """
     data = request.json
     count = 0
     try:
@@ -214,6 +242,9 @@ def set_process_status():
 
 @app.route('/lrs/api/v1.0/gateway/internet/log', methods=['POST'])
 def internet_log():
+    """
+        Return Internet connectivity histoty details of specific device
+    """
     data = request.json
     log = InternetLog(device_id=data['device_id'],from_timestamp=data['from_timestamp'],to_timestamp=data['to_timestamp'],status=data['status'])
     log.save()
@@ -221,6 +252,10 @@ def internet_log():
 
 @app.route('/internet/log/<string:device_id>',methods=['GET'])
 def show_internet_log(device_id):
+    """
+        Show Internet Log Report of device
+    """
+    
     data = InternetLog.objects(device_id=device_id).order_by('-from_timestamp')
     return render_template('internet_log.html',data=data)   
 
