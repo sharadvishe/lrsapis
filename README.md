@@ -10,7 +10,8 @@ $ heroku create
 $ git push heroku master
 ```
 
-### Running web application locally
+# Running web application locally
+### Usage
 ```bash
 $ git clone https://github.com/sharadvishe/lrsapis.git
 $ cd lrsapis
@@ -23,7 +24,7 @@ $ python app.py
 ### NOTE :
 	Add config.py file in lrsapis/ folder which will hold mongodb credentials as below:
 
-#####	
+#####
     MONGODB_SETTINGS = {
        'db': {dbname},
        'host' : 'mongodb://{username}:{password}@{host}:{port}/{dbname}'
