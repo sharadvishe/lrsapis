@@ -23,10 +23,10 @@ $ python app.py
 ### NOTE :
 	Add config.py file in lrsapis/ folder which will hold mongodb credentials as below:
 
-MONGODB_SETTINGS = {
-    'db': {dbname},
-    'host' : 'mongodb://{username}:{password}@{host}:{port}/{dbname}'
-}	
+######	MONGODB_SETTINGS = {
+       'db': {dbname},
+       'host' : 'mongodb://{username}:{password}@{host}:{port}/{dbname}'
+    } ######
 
 
 
