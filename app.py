@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-import os
-from flask import  Flask, abort, request, jsonify, g, url_for,render_template
+import sys,os
 import requests
 import json
 import datetime
 import collections
 from models.models import *
+
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.mongoengine.wtf import model_form
 from flask.ext.cors import CORS
-
+from flask import  Flask, abort, request, jsonify, g, url_for,render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.httpauth import HTTPBasicAuth
+
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
@@ -20,8 +21,8 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 app = Flask(__name__)
 CORS(app)
 app.config.from_object('config')
-mongoDb = MongoEngine(app)
-mongoDb.connect()
+mongo_db = MongoEngine(app)
+mongo_db.connect()
 
 
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
@@ -123,31 +124,28 @@ def convert(data):
 
 @app.route('/')
 @app.route('/statastic')
-def stat():
+def index():
     return render_template('statastic.html')    
 
 @app.route('/processes')
-def index():
-    log = json.loads((get_gateway_status()).data)
+def show_processes():
+    log = json.loads((health_status()).data)
     log = json.loads(log['data'])
     logs = []
     for data in log:
-        # data['timestamp'] = datetime.datetime.fromtimestamp(data['timestamp']).strftime('%d-%m-%Y %H:%M:%S')
-        # print data['timestamp']
         logs.append(data)
-    return render_template('index.html',log=logs)
+    return render_template('processes.html',log=logs)
 
 
 @app.route('/lrs/api/v1.0/gateway/status', methods=['GET'])
-def get_gateway_status():    
+def health_status():    
     status = GatewayStatus.objects.all().order_by('-timestamp')
     return jsonify(data=status.to_json())
     
 
 @app.route('/lrs/api/v1.0/gateway/status', methods=['POST'])
 @auth.login_required
-def set_gateway_status():
-
+def set_health_status():
     vm =  request.json['memory']['virtual_memory']
     sm =  request.json['memory']['swap_memory']
     ni =  request.json['network']['network_info']
@@ -165,46 +163,30 @@ def set_gateway_status():
     return jsonify(data=gs.to_json())
 
 @app.route('/lrs/api/v1.0/statastic', methods=['GET'])
-# @auth.login_required
-def statastic():    
+def statastic():
     status = Statastic.objects.all().order_by('-timestamp')
-    return status.to_json()       
-
+    return status.to_json()
 
 @app.route('/lrs/api/v1.0/statastic', methods=['POST'])
 @auth.login_required
 def set_statastic():    
     data = request.json
+    temperature = 0
+    device_id = "00:00:00:XX"
     prev = Statastic.objects(device_id=data['device_id']).order_by('-timestamp')[:1]
 
     if "temperature" in data:
         temperature = data['temperature']
-    else:
-        print "temperature is not exists"
-        temperature = 0
 
     if "device_id" in data:
         device_id = data['device_id']
-    else:
-        print "dummy device id"
-        device_id = "00:00:00:XX"
-
-    print "device is:"+device_id           
-
 
     if len(prev) == 0:
-        print "in if loop"
         pass
     else: 
-        print "in else loop"           
         prev = json.loads((prev[0]).to_json())
-        print prev['firmware_status']
-        print data['firmware_status']
         if prev['firmware_status'] == data['firmware_status']:
-            print "in elseif"
             s = Statastic.objects(id=prev['_id']['$oid']).delete()
-            print "object delete successfully"
-    print"create new object"        
 
     stat = Statastic(device_id=data['device_id'],timestamp=data['timestamp'],boot_time=data['boot_time'],cpu_utilization=data['cpu_utilization'],mem_utilization=data['mem_utilization'],uptime=data['uptime'],firmware_status=data['firmware_status'],temperature=temperature)
     stat.save()
@@ -219,18 +201,14 @@ def get_process_status():
 @app.route('/lrs/api/v1.0/gateway_internal', methods=['POST'])
 @auth.login_required
 def set_process_status():
-
     data = request.json
     count = 0
     try:
         for p in data:            
             process_info = ProcessInfo(pid=p['pid'],cpu=p['cpu'],memory=p['memory'],status=p['status'],name=p['name'],nice=p['nice'])
             process_info.save()
-            print "Object saved"
     except:
-        print "Exception"
-    else:
-        "run successfully"       
+        pass
     
     return count
 
@@ -242,9 +220,7 @@ def internet_log():
     return json.dumps(data)
 
 @app.route('/internet/log/<string:device_id>',methods=['GET'])
-def show_log(device_id):
-    # data = request.json
-    # import pdb;pdb.set_trace()
+def show_internet_log(device_id):
     data = InternetLog.objects(device_id=device_id).order_by('-from_timestamp')
     return render_template('internet_log.html',data=data)   
 
@@ -254,4 +230,3 @@ if __name__ == '__main__':
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)        
-    # app.run(debug=True)
